@@ -55,8 +55,6 @@ public:
     Q_INVOKABLE void setTokenScheme(QJsonObject);
 
 
-signals:
-    void finish(QJsonObject addreses, qiota::AddressBundle bundle);
 
 
 private:
