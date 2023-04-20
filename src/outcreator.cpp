@@ -9,50 +9,50 @@ void OutCreator::setAmount(QString amount_m)
 {
     amount_=amount_m.toULongLong();
 }
-void OutCreator::setIssuer(QJsonObject issuer)
+void OutCreator::setIssuer(const QJsonValue &issuer)
 {
     issuer_=std::shared_ptr<qblocks::Feature>(new qblocks::Issuer_Feature(qblocks::Address::from_(issuer)));
 }
-void OutCreator::setSender(QJsonObject sender)
+void OutCreator::setSender(const QJsonValue & sender)
 {
     sender_=std::shared_ptr<qblocks::Feature>(new qblocks::Sender_Feature(qblocks::Address::from_(sender)));
 }
 void OutCreator::setMetadata(QJsonObject metadatajson)
 {
-    auto metadata=QJsonDocument(metadatajson).toJson(QJsonDocument::Indented);
-    auto metadata_=std::shared_ptr<qblocks::Feature>(new Metadata_Feature(fl_array<quint16>(metadata)));
+    auto metadata=QJsonDocument(metadatajson).toJson();
+    metadata_=std::shared_ptr<qblocks::Feature>(new Metadata_Feature(fl_array<quint16>(metadata)));
 }
 void OutCreator::setStateMetadata(QJsonObject metadatajson)
 {
-    auto metadata=QJsonDocument(metadatajson).toJson(QJsonDocument::Indented);
-    auto state_metadata_=fl_array<quint16>(metadata);
+    auto metadata=QJsonDocument(metadatajson).toJson();
+    state_metadata_=fl_array<quint16>(metadata);
 }
 void OutCreator::setImmutableMetadata(QJsonObject metadatajson)
 {
-    auto metadata=QJsonDocument(metadatajson).toJson(QJsonDocument::Indented);
-    auto immutable_metadata_=std::shared_ptr<qblocks::Feature>(new Metadata_Feature(fl_array<quint16>(metadata)));
+    auto metadata=QJsonDocument(metadatajson).toJson();
+    immutable_metadata_=std::shared_ptr<qblocks::Feature>(new Metadata_Feature(fl_array<quint16>(metadata)));
 }
 void OutCreator::setTag(QString tag)
 {
     tag_=std::shared_ptr<qblocks::Feature>(new Tag_Feature(fl_array<quint8>(tag.toUtf8())));
 }
-void OutCreator::setAddressUnlockCondition(QJsonObject address)
+void OutCreator::setAddressUnlockCondition(const QJsonValue &address)
 {
     address_=std::shared_ptr<qblocks::Unlock_Condition>(new Address_Unlock_Condition(qblocks::Address::from_(address)));
 }
-void OutCreator::setStateControllerAddressUnlockCondition(QJsonObject address)
+void OutCreator::setStateControllerAddressUnlockCondition(const QJsonValue &address)
 {
     state_controller_address_=std::shared_ptr<qblocks::Unlock_Condition>(new State_Controller_Address_Unlock_Condition(qblocks::Address::from_(address)));
 }
-void OutCreator::setGovernorAddressUnlockCondition(QJsonObject address)
+void OutCreator::setGovernorAddressUnlockCondition(const QJsonValue &address)
 {
     governor_address_=std::shared_ptr<qblocks::Unlock_Condition>(new Governor_Address_Unlock_Condition(qblocks::Address::from_(address)));
 }
-void OutCreator::setImmutableAliasAddressUnlockCondition(QJsonObject address)
+void OutCreator::setImmutableAliasAddressUnlockCondition(const QJsonValue &address)
 {
     immutable_alias_address_=std::shared_ptr<qblocks::Unlock_Condition>(new Immutable_Alias_Address_Unlock_Condition(qblocks::Address::from_(address)));
 }
-void OutCreator::setStorageDepositReturnUnlockCondition(QJsonObject address, QString amount)
+void OutCreator::setStorageDepositReturnUnlockCondition(const QJsonValue &address, QString amount)
 {
     storage_deposit_return_=std::shared_ptr<qblocks::Unlock_Condition>
             (new Storage_Deposit_Return_Unlock_Condition(qblocks::Address::from_(address),amount.toULongLong()));
@@ -62,7 +62,7 @@ void OutCreator::setTimelockUnlockCondition(QDateTime unix_time_m)
     timelock_=std::shared_ptr<qblocks::Unlock_Condition>
             (new Timelock_Unlock_Condition(unix_time_m.toSecsSinceEpoch()));
 }
-void OutCreator::setExpirationUnlockCondition(QDateTime unix_time_m, QJsonObject address)
+void OutCreator::setExpirationUnlockCondition(QDateTime unix_time_m, const QJsonValue& address)
 {
     expiration_=std::shared_ptr<qblocks::Unlock_Condition>
             (new Expiration_Unlock_Condition(unix_time_m.toSecsSinceEpoch(),qblocks::Address::from_(address)));
@@ -102,7 +102,7 @@ void OutCreator::fromChain(quint32 index,qiota::AddressBundle bundle)
 
     }
 }
-void OutCreator::addNativeToken(QJsonObject token)
+void OutCreator::addNativeToken(const QJsonValue &token)
 {
     const auto tokenptr=qblocks::Native_Token::from_(token);
     native_tokens[tokenptr->token_id()]+=tokenptr->amount();
@@ -172,12 +172,13 @@ std::vector<std::shared_ptr<qblocks::Native_Token>> OutCreator::getNativeTokens(
     }
     return var;
 }
-void OutCreator::setTokenScheme(QJsonObject tokenscheme)
+void OutCreator::setTokenScheme(const QJsonValue& tokenscheme)
 {
     token_scheme_=qblocks::Token_Scheme::from_(tokenscheme);
 }
 std::shared_ptr<qblocks::Output>  OutCreator::getOutput(void)
 {
+
     switch(typ_) {
 
     case NFT_typ:

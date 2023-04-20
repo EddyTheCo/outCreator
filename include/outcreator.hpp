@@ -26,33 +26,33 @@ public:
     Q_ENUM(types)
 
     Q_INVOKABLE void fromChain(quint32 index, qiota::AddressBundle bundle);
-    Q_INVOKABLE void addNativeToken(QJsonObject token);
+    Q_INVOKABLE void addNativeToken(const QJsonValue &token);
     Q_INVOKABLE std::shared_ptr<qblocks::Output>  getOutput(void);
 
 
     Q_INVOKABLE void setTyp(OutCreator::types typ_m){typ_=typ_m;};
     Q_INVOKABLE void setAmount(QString amount_m);
-    Q_INVOKABLE void setIssuer(QJsonObject issuer);
-    Q_INVOKABLE void setSender(QJsonObject sender);
+    Q_INVOKABLE void setIssuer(const QJsonValue &issuer);
+    Q_INVOKABLE void setSender(const QJsonValue &sender);
     Q_INVOKABLE void setMetadata(QJsonObject metadata);
     Q_INVOKABLE void setStateMetadata(QJsonObject metadata);
     Q_INVOKABLE void setImmutableMetadata(QJsonObject metadata);
     Q_INVOKABLE void setTag(QString tag);
 
-    Q_INVOKABLE void setAddressUnlockCondition(QJsonObject address);
-    Q_INVOKABLE void setStateControllerAddressUnlockCondition(QJsonObject address);
-    Q_INVOKABLE void setGovernorAddressUnlockCondition(QJsonObject address);
-    Q_INVOKABLE void setImmutableAliasAddressUnlockCondition(QJsonObject address);
+    Q_INVOKABLE void setAddressUnlockCondition(const QJsonValue &address);
+    Q_INVOKABLE void setStateControllerAddressUnlockCondition(const QJsonValue &address);
+    Q_INVOKABLE void setGovernorAddressUnlockCondition(const QJsonValue &address);
+    Q_INVOKABLE void setImmutableAliasAddressUnlockCondition(const QJsonValue &address);
 
-    Q_INVOKABLE void setStorageDepositReturnUnlockCondition(QJsonObject address, QString amount);
+    Q_INVOKABLE void setStorageDepositReturnUnlockCondition(const QJsonValue &address, QString amount);
     Q_INVOKABLE void setTimelockUnlockCondition(QDateTime unix_time_m);
-    Q_INVOKABLE void setExpirationUnlockCondition(QDateTime unix_time_m,QJsonObject address);
+    Q_INVOKABLE void setExpirationUnlockCondition(QDateTime unix_time_m, const QJsonValue &address);
 
 
     Q_INVOKABLE void setSerialNumber(quint32 serial_number_m){serial_number_=serial_number_m;}
     Q_INVOKABLE void setStateIndex(quint32 state_index_m){state_index_=state_index_m;}
     Q_INVOKABLE void setFoundryCounter_(quint32 foundry_counter_m){foundry_counter_=foundry_counter_m;}
-    Q_INVOKABLE void setTokenScheme(QJsonObject);
+    Q_INVOKABLE void setTokenScheme(const QJsonValue &);
 
 
 
