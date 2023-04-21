@@ -73,7 +73,7 @@ void OutCreator::fromChain(quint32 index,qiota::AddressBundle bundle)
 
     case NFT_typ:
     {
-        if(bundle.nft_outputs.size()<index)
+        if(bundle.nft_outputs.size()>index)
         {
             out_=bundle.nft_outputs.at(index);
         }
@@ -81,7 +81,7 @@ void OutCreator::fromChain(quint32 index,qiota::AddressBundle bundle)
     }
     case Foundry_typ:
     {
-        if(bundle.foundry_outputs.size()<index)
+        if(bundle.foundry_outputs.size()>index)
         {
             out_=bundle.foundry_outputs.at(index);
         }
@@ -89,7 +89,7 @@ void OutCreator::fromChain(quint32 index,qiota::AddressBundle bundle)
     }
     case Alias_typ:
     {
-        if(bundle.alias_outputs.size()<index)
+        if(bundle.alias_outputs.size()>index)
         {
             out_=bundle.alias_outputs.at(index);
         }
@@ -150,15 +150,13 @@ std::vector<std::shared_ptr<qblocks::Feature>> OutCreator::getFeatures()const
 std::vector<std::shared_ptr<qblocks::Feature>> OutCreator::getImmutableFeatures()const
 {
     std::vector<std::shared_ptr<qblocks::Feature>> var;
-    if(typ_==Alias_typ)
-    {
-        if(issuer_)var.push_back(issuer_);
-        if(immutable_metadata_)var.push_back(immutable_metadata_);
-        return var;
-    }
     if(typ_!=Basic_typ)
     {
-        if(immutable_metadata_)var.push_back(metadata_);
+        if(typ_==Alias_typ||typ_==NFT_typ)
+        {
+            if(issuer_)var.push_back(issuer_);
+        }
+        if(immutable_metadata_)var.push_back(immutable_metadata_);
         return var;
     }
     return var;
@@ -236,7 +234,8 @@ std::shared_ptr<qblocks::Output>  OutCreator::getOutput(void)
     }
     case Basic_typ:
     {
-        return out_=std::shared_ptr<qblocks::Output>(new Basic_Output(amount_,getUnlocks(),getFeatures(),getNativeTokens()));
+        out_=std::shared_ptr<qblocks::Output>(new Basic_Output(amount_,getUnlocks(),getFeatures(),getNativeTokens()));
+        return out_;
     }
 
     }
