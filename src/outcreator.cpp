@@ -9,18 +9,20 @@ void OutCreator::setAmount(QString amount_m)
 {
     amount_=amount_m.toULongLong();
 }
+
 void OutCreator::setIssuer(const QJsonValue &issuer)
 {
-    issuer_=std::shared_ptr<qblocks::Feature>(new qblocks::Issuer_Feature(qblocks::Address::from_(issuer)));
+    issuer_=Feature::Issuer(qblocks::Address::from_(issuer));
 }
 void OutCreator::setSender(const QJsonValue & sender)
 {
-    sender_=std::shared_ptr<qblocks::Feature>(new qblocks::Sender_Feature(qblocks::Address::from_(sender)));
+    sender_=Feature::Sender(qblocks::Address::from_(sender));
 }
 void OutCreator::setMetadata(QJsonObject metadatajson)
 {
     auto metadata=QJsonDocument(metadatajson).toJson();
-    metadata_=std::shared_ptr<qblocks::Feature>(new Metadata_Feature(fl_array<quint16>(metadata)));
+    metadata_=Feature::Metadata(metadata);
+
 }
 void OutCreator::setStateMetadata(QJsonObject metadatajson)
 {
@@ -30,42 +32,41 @@ void OutCreator::setStateMetadata(QJsonObject metadatajson)
 void OutCreator::setImmutableMetadata(QJsonObject metadatajson)
 {
     auto metadata=QJsonDocument(metadatajson).toJson();
-    immutable_metadata_=std::shared_ptr<qblocks::Feature>(new Metadata_Feature(fl_array<quint16>(metadata)));
+    immutable_metadata_=Feature::Metadata(metadata);
 }
 void OutCreator::setTag(QString tag)
 {
-    tag_=std::shared_ptr<qblocks::Feature>(new Tag_Feature(fl_array<quint8>(tag.toUtf8())));
+    tag_=Feature::Tag(tag.toUtf8());
 }
 void OutCreator::setAddressUnlockCondition(const QJsonValue &address)
 {
-    address_=std::shared_ptr<qblocks::Unlock_Condition>(new Address_Unlock_Condition(qblocks::Address::from_(address)));
+    address_=Unlock_Condition::Address(Address::from_(address));
 }
 void OutCreator::setStateControllerAddressUnlockCondition(const QJsonValue &address)
 {
-    state_controller_address_=std::shared_ptr<qblocks::Unlock_Condition>(new State_Controller_Address_Unlock_Condition(qblocks::Address::from_(address)));
+    state_controller_address_=
+            Unlock_Condition::State_Controller_Address(Address::from_(address));
 }
 void OutCreator::setGovernorAddressUnlockCondition(const QJsonValue &address)
 {
-    governor_address_=std::shared_ptr<qblocks::Unlock_Condition>(new Governor_Address_Unlock_Condition(qblocks::Address::from_(address)));
+    governor_address_=Unlock_Condition::Governor_Address(Address::from_(address));
 }
 void OutCreator::setImmutableAliasAddressUnlockCondition(const QJsonValue &address)
 {
-    immutable_alias_address_=std::shared_ptr<qblocks::Unlock_Condition>(new Immutable_Alias_Address_Unlock_Condition(qblocks::Address::from_(address)));
+    immutable_alias_address_=Unlock_Condition::Immutable_Alias_Address(Address::from_(address));
 }
 void OutCreator::setStorageDepositReturnUnlockCondition(const QJsonValue &address, QString amount)
 {
-    storage_deposit_return_=std::shared_ptr<qblocks::Unlock_Condition>
-            (new Storage_Deposit_Return_Unlock_Condition(qblocks::Address::from_(address),amount.toULongLong()));
+    storage_deposit_return_=
+            Unlock_Condition::Storage_Deposit_Return(Address::from_(address),amount.toULongLong());
 }
 void OutCreator::setTimelockUnlockCondition(QDateTime unix_time_m)
 {
-    timelock_=std::shared_ptr<qblocks::Unlock_Condition>
-            (new Timelock_Unlock_Condition(unix_time_m.toSecsSinceEpoch()));
+    timelock_=Unlock_Condition::Timelock(unix_time_m.toSecsSinceEpoch());
 }
 void OutCreator::setExpirationUnlockCondition(QDateTime unix_time_m, const QJsonValue& address)
 {
-    expiration_=std::shared_ptr<qblocks::Unlock_Condition>
-            (new Expiration_Unlock_Condition(unix_time_m.toSecsSinceEpoch(),qblocks::Address::from_(address)));
+    expiration_=Unlock_Condition::Expiration(unix_time_m.toSecsSinceEpoch(),Address::from_(address));
 }
 void OutCreator::fromChain(quint32 index,qiota::AddressBundle bundle)
 {
@@ -104,12 +105,12 @@ void OutCreator::fromChain(quint32 index,qiota::AddressBundle bundle)
 }
 void OutCreator::addNativeToken(const QJsonValue &token)
 {
-    const auto tokenptr=qblocks::Native_Token::from_(token);
+    const auto tokenptr=Native_Token::from_(token);
     native_tokens[tokenptr->token_id()]+=tokenptr->amount();
 }
-std::vector<std::shared_ptr<qblocks::Unlock_Condition>> OutCreator::getUnlocks()const
+auto OutCreator::getUnlocks()const
 {
-    std::vector<std::shared_ptr<qblocks::Unlock_Condition>> var;
+    pvector<const Unlock_Condition> var;
     if(typ_==Alias_typ)
     {
         var.push_back(state_controller_address_);
@@ -127,9 +128,9 @@ std::vector<std::shared_ptr<qblocks::Unlock_Condition>> OutCreator::getUnlocks()
     if(expiration_)var.push_back(expiration_);
     return var;
 }
-std::vector<std::shared_ptr<qblocks::Feature>> OutCreator::getFeatures()const
+auto OutCreator::getFeatures()const
 {
-    std::vector<std::shared_ptr<qblocks::Feature>> var;
+    pvector<const Feature> var;
     if(typ_==Alias_typ)
     {
         if(sender_)var.push_back(sender_);
@@ -147,9 +148,9 @@ std::vector<std::shared_ptr<qblocks::Feature>> OutCreator::getFeatures()const
     if(tag_)var.push_back(tag_);
     return var;
 }
-std::vector<std::shared_ptr<qblocks::Feature>> OutCreator::getImmutableFeatures()const
+auto OutCreator::getImmutableFeatures()const
 {
-    std::vector<std::shared_ptr<qblocks::Feature>> var;
+    pvector<const Feature> var;
     if(typ_!=Basic_typ)
     {
         if(typ_==Alias_typ||typ_==NFT_typ)
@@ -161,12 +162,12 @@ std::vector<std::shared_ptr<qblocks::Feature>> OutCreator::getImmutableFeatures(
     }
     return var;
 }
-std::vector<std::shared_ptr<qblocks::Native_Token>> OutCreator::getNativeTokens()const
+auto OutCreator::getNativeTokens()const
 {
-    std::vector<std::shared_ptr<qblocks::Native_Token>> var;
+    pvector<const Native_Token> var;
     for (const auto& v : native_tokens)
     {
-        var.push_back(std::shared_ptr<qblocks::Native_Token>(new qblocks::Native_Token(v.first,v.second)));
+        var.push_back(Native_Token::Native(v.first,v.second));
     }
     return var;
 }
@@ -174,7 +175,7 @@ void OutCreator::setTokenScheme(const QJsonValue& tokenscheme)
 {
     token_scheme_=qblocks::Token_Scheme::from_(tokenscheme);
 }
-std::shared_ptr<qblocks::Output>  OutCreator::getOutput(void)
+void  OutCreator::init()
 {
 
     switch(typ_) {
@@ -183,7 +184,7 @@ std::shared_ptr<qblocks::Output>  OutCreator::getOutput(void)
     {
         if(!out_)
         {
-            out_=std::shared_ptr<qblocks::Output>(new NFT_Output(amount_,getUnlocks(),getFeatures(),getNativeTokens(),getImmutableFeatures()));
+            out_=Output::NFT(amount_,getUnlocks(),getNativeTokens(),getImmutableFeatures(),getFeatures());
         }
         else
         {
@@ -192,52 +193,53 @@ std::shared_ptr<qblocks::Output>  OutCreator::getOutput(void)
             out_->features_=getFeatures();
             out_->native_tokens_=getNativeTokens();
         }
-        return out_;
+
     }
     case Foundry_typ:
     {
         if(!out_)
         {
-            out_=std::shared_ptr<qblocks::Output>(new Foundry_Output(amount_,getUnlocks(),token_scheme_,serial_number_,getFeatures(),getNativeTokens(),getImmutableFeatures()));
+            out_=Output::Foundry(amount_,getUnlocks(),token_scheme_,serial_number_,getNativeTokens(),getImmutableFeatures(),getFeatures());
         }
         else
         {
+
             out_->amount_=amount_;
-            if(token_scheme_)
-            {
-                auto output=std::dynamic_pointer_cast<qblocks::Foundry_Output>(out_);
-                output->token_scheme_=token_scheme_;
-            }
+            auto output=std::static_pointer_cast<Foundry_Output>(out_);
+            output->token_scheme_=token_scheme_;
             out_->features_=getFeatures();
             out_->native_tokens_=getNativeTokens();
+
         }
-        return out_;
+
     }
     case Alias_typ:
     {
         if(!out_)
         {
-            out_=std::shared_ptr<qblocks::Output>(new Alias_Output(amount_,getUnlocks(),state_index_,foundry_counter_,state_metadata_,getFeatures(),getNativeTokens(),getImmutableFeatures()));
+            out_=Output::Alias(amount_,getUnlocks(),state_metadata_,foundry_counter_,state_index_,getNativeTokens(),getImmutableFeatures(),getFeatures());
         }
         else
         {
+
             out_->amount_=amount_;
-            auto output=std::dynamic_pointer_cast<qblocks::Alias_Output>(out_);
+            auto output=std::static_pointer_cast<Alias_Output>(out_);
             output->state_index_++;
             output->foundry_counter_=foundry_counter_;
             out_->amount_=amount_;
             out_->unlock_conditions_=getUnlocks();
             out_->features_=getFeatures();
             out_->native_tokens_=getNativeTokens();
+
         }
-        return out_;
+
     }
     case Basic_typ:
     {
-        out_=std::shared_ptr<qblocks::Output>(new Basic_Output(amount_,getUnlocks(),getFeatures(),getNativeTokens()));
-        return out_;
+        out_=Output::Basic(amount_,getUnlocks(),getNativeTokens(),getFeatures());
+
     }
 
     }
-    return out_;
+
 }
