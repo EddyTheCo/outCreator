@@ -28,6 +28,7 @@ public:
     Q_INVOKABLE void fromChain(quint32 index, qiota::AddressBundle bundle);
     Q_INVOKABLE void addNativeToken(const QJsonValue &token);
     Q_INVOKABLE void init(void);
+    Q_INVOKABLE void restart(void);
     Q_INVOKABLE std::shared_ptr<qblocks::Output> getOutput(){if(!out_){init();}return out_;}
 
     Q_INVOKABLE void setTyp(OutCreator::types typ_m){typ_=typ_m;};
