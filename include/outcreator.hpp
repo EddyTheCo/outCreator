@@ -28,13 +28,12 @@ public:
     Q_INVOKABLE void fromChain(quint32 index, qiota::AddressBundle bundle);
     Q_INVOKABLE void addNativeToken(const QJsonValue &token);
     Q_INVOKABLE void init(void);
-    Q_INVOKABLE void restart(void);
+    Q_INVOKABLE void reset(void);
     Q_INVOKABLE std::shared_ptr<qblocks::Output> getOutput(){if(!out_){init();}return out_;}
 
     Q_INVOKABLE void setTyp(OutCreator::types typ_m){typ_=typ_m;};
     Q_INVOKABLE void setAmount(QString amount_m);
-    Q_INVOKABLE QString amount(void)const{
-        return QString::number((out_)?out_->amount_:amount_);}
+
     Q_INVOKABLE void setIssuer(const QJsonValue &issuer);
     Q_INVOKABLE void setSender(const QJsonValue &sender);
     Q_INVOKABLE void setMetadata(QJsonObject metadata);

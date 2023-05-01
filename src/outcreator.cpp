@@ -12,11 +12,11 @@ void OutCreator::setAmount(QString amount_m)
 
 void OutCreator::setIssuer(const QJsonValue &issuer)
 {
-	issuer_=Feature::Issuer(qblocks::Address::from_(issuer));
+    issuer_=Feature::Issuer(qblocks::Address::from_(issuer));
 }
 void OutCreator::setSender(const QJsonValue & sender)
 {
-	sender_=Feature::Sender(qblocks::Address::from_(sender));
+    sender_=Feature::Sender(qblocks::Address::from_(sender));
 }
 void OutCreator::setMetadata(QJsonObject metadatajson)
 {
@@ -175,7 +175,7 @@ void OutCreator::setTokenScheme(const QJsonValue& tokenscheme)
 {
 	token_scheme_=qblocks::Token_Scheme::from_(tokenscheme);
 }
-void OutCreator::restart()
+void OutCreator::reset()
 {
 	out_=nullptr;
 	foundry_counter_=0;
@@ -198,7 +198,7 @@ void OutCreator::restart()
 }
 void  OutCreator::init()
 {
-	qDebug()<<"OutCreator::init";
+
 	switch(typ_) {
 
 		case NFT_typ:
@@ -206,7 +206,6 @@ void  OutCreator::init()
 				if(!out_)
 				{
 					out_=Output::NFT(amount_,getUnlocks(),getNativeTokens(),getImmutableFeatures(),getFeatures());
-					qDebug()<<"creating out:"<<out_->get_Json();
 				}
 				else
 				{
