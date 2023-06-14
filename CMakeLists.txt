@@ -23,7 +23,7 @@ include(GNUInstallDirs)
 FetchContent_Declare(
 	qaddr_bundle
 	GIT_REPOSITORY https://github.com/EddyTheCo/QAddrBundle.git
-	GIT_TAG v0.1.3
+	GIT_TAG v0.1.1
 	FIND_PACKAGE_ARGS 0 CONFIG
 	)
 
